@@ -119,7 +119,7 @@ const CatalogRouter: React.FC = () => {
         const params = new URLSearchParams();
 
         if (newFilters.searchTerm) {
-            newPath = `/cursos/q=${newFilters.searchTerm}`;
+            newPath = `/cursos/q=${encodeURIComponent(newFilters.searchTerm)}`;
             // Add others as query params if needed
             if (newFilters.state) params.set('state', slugify(newFilters.state));
             if (newFilters.city) params.set('city', slugify(newFilters.city));

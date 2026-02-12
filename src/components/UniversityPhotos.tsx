@@ -50,7 +50,7 @@ const UniversityPhotos: React.FC<UniversityPhotosProps> = ({ universityId, slug,
       try {
         const { data: universities, error } = await supabase
           .from('Instituicoes')
-          .select('*');
+          .select('id, name, cidade, estado');
 
         if (error) throw error;
 

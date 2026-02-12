@@ -10,7 +10,6 @@ const Header: React.FC<HeaderProps> = ({ onNavigateHome }) => {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Buscar:', searchQuery);
   };
 
   const scrollToNewsletter = () => {
@@ -27,26 +26,26 @@ const Header: React.FC<HeaderProps> = ({ onNavigateHome }) => {
         <div className="flex items-center justify-center py-3 relative">
           {/* Links de navegação centralizados */}
           <nav className="flex items-center gap-6 lg:gap-8">
-            <a 
-              href="https://melhoresescolasmedicas.com/conteudos-para-baixar/" 
+            <a
+              href="https://melhoresescolasmedicas.com/conteudos-para-baixar/"
               className="text-white hover:text-[#C2FF3A] transition-colors text-xs lg:text-sm font-medium"
             >
               Materiais para baixar
             </a>
-            <a 
-              href="https://melhoresescolasmedicas.com/" 
+            <a
+              href="https://melhoresescolasmedicas.com/"
               className="text-[#C2FF3A] hover:text-white transition-colors text-xs lg:text-sm font-medium"
             >
               Notícias
             </a>
-            <a 
-              href="https://melhoresescolasmedicas.com/painel-da-educacao-medica/" 
+            <a
+              href="https://melhoresescolasmedicas.com/painel-da-educacao-medica/"
               className="text-white hover:text-[#C2FF3A] transition-colors text-xs lg:text-sm font-medium"
             >
               Painel da Educação Médica
             </a>
-            <a 
-              href="https://melhoresescolasmedicas.com/sobre/" 
+            <a
+              href="https://melhoresescolasmedicas.com/sobre/"
               className="text-white hover:text-[#C2FF3A] transition-colors text-xs lg:text-sm font-medium"
             >
               Quem somos
@@ -65,28 +64,28 @@ const Header: React.FC<HeaderProps> = ({ onNavigateHome }) => {
                   placeholder="Buscar..."
                   className="bg-[#004B9D] border border-white/30 rounded-full px-4 py-1.5 pr-10 text-white placeholder-white/70 text-xs outline-none focus:border-white transition-colors w-48 lg:w-64"
                 />
-                <button 
-                  type="submit" 
+                <button
+                  type="submit"
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 hover:opacity-80 transition-opacity"
                 >
-                  <svg 
-                    xmlns="http://www.w3.org/2000/svg" 
-                    width="16" 
-                    height="16" 
-                    fill="none" 
-                    viewBox="0 0 24 24" 
-                    stroke="white" 
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="white"
                     strokeWidth="2"
                   >
-                    <circle cx="11" cy="11" r="8"/>
-                    <path d="M21 21l-4.35-4.35"/>
+                    <circle cx="11" cy="11" r="8" />
+                    <path d="M21 21l-4.35-4.35" />
                   </svg>
                 </button>
               </div>
             </form>
 
             {/* Botão Newsletter */}
-            <button 
+            <button
               onClick={scrollToNewsletter}
               className="bg-[#C2FF3A] text-[#004B9D] font-bold rounded-full px-5 py-2 text-xs whitespace-nowrap hover:bg-[#B3F02A] transition-colors"
             >
@@ -100,18 +99,18 @@ const Header: React.FC<HeaderProps> = ({ onNavigateHome }) => {
       <div className="md:hidden w-full px-4 py-3">
         <div className="flex items-center justify-between">
           {/* Botão Menu Hamburguer */}
-          <button 
+          <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="text-white p-2"
             aria-label="Menu"
           >
-            <svg 
-              xmlns="http://www.w3.org/2000/svg" 
-              width="24" 
-              height="24" 
-              fill="none" 
-              viewBox="0 0 24 24" 
-              stroke="currentColor" 
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
               strokeWidth="2"
             >
               {mobileMenuOpen ? (
@@ -123,7 +122,7 @@ const Header: React.FC<HeaderProps> = ({ onNavigateHome }) => {
           </button>
 
           {/* Botão Newsletter Mobile */}
-          <button 
+          <button
             onClick={scrollToNewsletter}
             className="bg-[#C2FF3A] text-[#004B9D] font-bold rounded-full px-4 py-1.5 text-xs whitespace-nowrap hover:bg-[#B3F02A] transition-colors"
           >
@@ -135,29 +134,29 @@ const Header: React.FC<HeaderProps> = ({ onNavigateHome }) => {
         {mobileMenuOpen && (
           <div className="mt-3 pb-3 border-t border-white/10 pt-3">
             <nav className="flex flex-col gap-3">
-              <a 
-                href="https://melhoresescolasmedicas.com/conteudos-para-baixar/" 
+              <a
+                href="https://melhoresescolasmedicas.com/conteudos-para-baixar/"
                 className="text-white hover:text-[#C2FF3A] transition-colors text-sm font-medium"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Materiais para baixar
               </a>
-              <a 
-                href="https://melhoresescolasmedicas.com/" 
+              <a
+                href="https://melhoresescolasmedicas.com/"
                 className="text-[#C2FF3A] hover:text-white transition-colors text-sm font-medium"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Notícias
               </a>
-              <a 
-                href="https://melhoresescolasmedicas.com/painel-da-educacao-medica/" 
+              <a
+                href="https://melhoresescolasmedicas.com/painel-da-educacao-medica/"
                 className="text-white hover:text-[#C2FF3A] transition-colors text-sm font-medium"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Painel da Educação Médica
               </a>
-              <a 
-                href="https://melhoresescolasmedicas.com/sobre/" 
+              <a
+                href="https://melhoresescolasmedicas.com/sobre/"
                 className="text-white hover:text-[#C2FF3A] transition-colors text-sm font-medium"
                 onClick={() => setMobileMenuOpen(false)}
               >
@@ -175,21 +174,21 @@ const Header: React.FC<HeaderProps> = ({ onNavigateHome }) => {
                   placeholder="Buscar..."
                   className="bg-[#004B9D] border border-white/30 rounded-full px-4 py-2 pr-10 text-white placeholder-white/70 text-sm outline-none focus:border-white transition-colors w-full"
                 />
-                <button 
-                  type="submit" 
+                <button
+                  type="submit"
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 hover:opacity-80 transition-opacity"
                 >
-                  <svg 
-                    xmlns="http://www.w3.org/2000/svg" 
-                    width="18" 
-                    height="18" 
-                    fill="none" 
-                    viewBox="0 0 24 24" 
-                    stroke="white" 
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="18"
+                    height="18"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="white"
                     strokeWidth="2"
                   >
-                    <circle cx="11" cy="11" r="8"/>
-                    <path d="M21 21l-4.35-4.35"/>
+                    <circle cx="11" cy="11" r="8" />
+                    <path d="M21 21l-4.35-4.35" />
                   </svg>
                 </button>
               </div>
@@ -200,13 +199,13 @@ const Header: React.FC<HeaderProps> = ({ onNavigateHome }) => {
 
       {/* Logo Centralizada */}
       <div className="flex justify-center py-4 md:py-6 border-t border-white/10">
-        <div 
-          className="cursor-pointer" 
+        <div
+          className="cursor-pointer"
           onClick={onNavigateHome}
         >
-          <img 
-            src="https://melhoresescolasmedicas.com/wp-content/uploads/2023/12/Group-15.png" 
-            alt="MEM - Melhores Escolas Médicas" 
+          <img
+            src="https://melhoresescolasmedicas.com/wp-content/uploads/2023/12/Group-15.png"
+            alt="MEM - Melhores Escolas Médicas"
             className="h-7 md:h-8 lg:h-10 w-auto"
           />
         </div>

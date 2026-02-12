@@ -2,7 +2,6 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import Papa from 'papaparse';
 import { createClient } from '@supabase/supabase-js';
 import dotenv from 'dotenv';
 
@@ -39,7 +38,7 @@ async function generateSitemap() {
     try {
         const { data: universities, error } = await supabase
             .from('Instituicoes')
-            .select('*');
+            .select('name, estado, cidade');
 
         if (error) {
             throw error;

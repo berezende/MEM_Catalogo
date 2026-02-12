@@ -57,7 +57,7 @@ const UniversityDetail: React.FC<UniversityDetailProps> = ({ universityId, slug,
       try {
         const { data: universities, error } = await supabase
           .from('Instituicoes')
-          .select('*');
+          .select('id, name, cidade, estado, tipo, website, vacancies, periodization, process, descricao, mensalidade, students, campus_name, endereco, numero_endereco, bairro, logo, mec_rating, regional_bonus, telefone, email, data_criacao, CPC, ranking');
 
         if (error) throw error;
 

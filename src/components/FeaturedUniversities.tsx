@@ -20,7 +20,7 @@ interface University {
 
 const FeaturedUniversities: React.FC<FeaturedUniversitiesProps> = ({ onUniversitySelect }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [itemsPerView, setItemsPerView] = useState(4);
+  const [_itemsPerView, setItemsPerView] = useState(4);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [hasAnimated, setHasAnimated] = useState(false);
   const [dragStart, setDragStart] = useState<number | null>(null);
@@ -41,7 +41,7 @@ const FeaturedUniversities: React.FC<FeaturedUniversitiesProps> = ({ onUniversit
       try {
         const { data: universities, error } = await supabase
           .from('Instituicoes')
-          .select('*');
+          .select('id, name, cidade, estado, logo');
 
         if (error) throw error;
 
@@ -59,7 +59,7 @@ const FeaturedUniversities: React.FC<FeaturedUniversitiesProps> = ({ onUniversit
             'UNIVERSIDADE FEDERAL DE SANTA CATARINA'
           ];
 
-          const allUniversities = universities.map((row: any, index: number) => ({
+          const allUniversities = universities.map((row: any) => ({
             id: row.id,
             name: row.name,
             location: `${row.cidade}, ${row.estado}`,
@@ -105,9 +105,6 @@ const FeaturedUniversities: React.FC<FeaturedUniversitiesProps> = ({ onUniversit
             return acc;
           }, []);
 
-          console.log('Total de universidades no Supabase:', allUniversities.length);
-          console.log('Universidades encontradas em destaque (com duplicatas):', featured.length);
-          console.log('Universidades únicas em destaque:', uniqueFeatured.map((u: University) => `${u.name} - ${u.location} - Logo: ${u.image.substring(0, 50)}...`));
           setFeaturedUniversities(uniqueFeatured);
           setIsLoading(false);
         }
@@ -488,7 +485,7 @@ const FeaturedUniversities: React.FC<FeaturedUniversitiesProps> = ({ onUniversit
                     animationDelay: `${idx * 0.15}s`,
                     ['--card-offset' as any]: `${(idx - 2) * 10}px`,
                   }}
-                  onClick={(e) => {
+                  onClick={() => {
                     if (!isDragging && Math.abs(dragOffset) < 5 && isCenter) {
                       onUniversitySelect(slugify(university.name), university.state, university.city);
                     }

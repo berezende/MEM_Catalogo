@@ -30,12 +30,8 @@ const HomePage: React.FC = () => {
     const params = new URLSearchParams();
 
     if (filters.searchTerm) {
-      url = `/cursos/q=${filters.searchTerm}`;
+      url = `/cursos/q=${encodeURIComponent(filters.searchTerm)}`;
     } else if (filters.state) {
-      const stateSlug = filters.state; // Assumes state name is passed, we might need to verify or slugify? 
-      // We will trust the input matches Brazilian States or we just assume logic handles it.
-      // CatalogRouter expects State Name or Slug? checks "isBrazilianState".
-      // If filters.state is "São Paulo", isBrazilianState matches.
       url = `/cursos/${slugify(filters.state)}`;
       if (filters.city) {
         url += `/${slugify(filters.city)}`;
