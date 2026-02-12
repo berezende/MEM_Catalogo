@@ -1,16 +1,15 @@
 
-
 import React, { Suspense } from 'react';
 import { Routes, Route, useNavigate, Navigate } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
+import HomePage from './pages/HomePage';
 
-// Lazy load page components for code splitting
-const HomePage = React.lazy(() => import('./pages/HomePage'));
+// Lazy load only secondary pages for code splitting
 const CatalogRouter = React.lazy(() => import('./components/CatalogRouter'));
 
-// Simple loading fallback
+// Simple loading fallback (only used for lazy-loaded pages)
 const PageLoader = () => (
   <div className="min-h-screen flex items-center justify-center bg-white">
     <div className="flex flex-col items-center gap-4">
@@ -28,15 +27,17 @@ function App() {
       <ScrollToTop />
       <Header onNavigateHome={() => navigate('/')} />
 
-      <Suspense fallback={<PageLoader />}>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
+      <Routes>
+        <Route path="/" element={<HomePage />} />
 
-          <Route path="/cursos/*" element={<CatalogRouter />} />
-          {/* Fallback para home se rota não encontrada */}
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </Suspense>
+        <Route path="/cursos/*" element={
+          <Suspense fallback={<PageLoader />}>
+            <CatalogRouter />
+          </Suspense>
+        } />
+        {/* Fallback para home se rota não encontrada */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
 
       <Footer />
     </div>
