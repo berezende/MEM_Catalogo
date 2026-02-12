@@ -158,9 +158,19 @@ const UniversityDetail: React.FC<UniversityDetailProps> = ({ universityId, slug,
   return (
     <div className="min-h-screen bg-white">
       <SEO
-        title={`${university.name} - ${university.city}, ${university.state}`}
-        description={`Medicina na ${university.name} em ${university.city}, ${university.state}. Confira notas de corte, endereço e tudo sobre o curso.`}
+        title={`${university.name} - Medicina em ${university.city}, ${university.state} | MEM`}
+        description={(() => {
+          const parts: string[] = [`Curso de Medicina na ${university.name} em ${university.city}, ${university.state}.`];
+          if (university.type) parts.push(`Instituição ${university.type}.`);
+          if (university.mec_rating && university.mec_rating !== 'Não informado') parts.push(`Nota MEC: ${university.mec_rating}.`);
+          if (university.ranking && university.ranking !== 'Não informado') parts.push(`Ranking: ${university.ranking}.`);
+          if (university.mensalidade && university.mensalidade.trim() !== '') parts.push(`Mensalidade a partir de ${university.mensalidade}.`);
+          parts.push('Confira notas de corte, endereço e tudo sobre o curso.');
+          return parts.join(' ');
+        })()}
         type="article"
+        image={university.image}
+        keywords={`medicina ${university.city}, medicina ${university.state}, ${university.name}, faculdade medicina ${university.city}, ${university.type} medicina, vestibular medicina ${university.state}`}
       />
       {/* Header com breadcrumb */}
 

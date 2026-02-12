@@ -81,9 +81,11 @@ const HomePage: React.FC = () => {
   return (
     <div className="min-h-screen bg-white">
       <SEO
-        title="MEM | Catálogo de Medicina"
-        description="Encontre o seu curso de medicina ideal e descubra as melhores instituições do Brasil."
+        title="MEM | Catálogo de Medicina - Encontre seu Curso de Medicina no Brasil"
+        description="O guia mais completo de cursos de medicina do Brasil. Compare universidades públicas e particulares, veja notas de corte, mensalidades, rankings e descubra a faculdade de medicina ideal para sua carreira."
         type="website"
+        keywords="faculdade de medicina, curso de medicina, vestibular medicina, medicina no Brasil, universidades de medicina, melhores escolas médicas, nota de corte medicina, ENEM medicina, SISU medicina"
+        canonical="https://catalogo.melhoresescolasmedicas.com/"
       />
       <Hero onSearch={handleSearch} />
       <FeaturedUniversities onUniversitySelect={handleUniversitySelect} />
