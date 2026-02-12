@@ -45,6 +45,7 @@ interface University {
 
 
 const UniversityDetail: React.FC<UniversityDetailProps> = ({ universityId, slug, stateSlug, citySlug, onBack }) => {
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [university, setUniversity] = useState<University | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedPhoto, setSelectedPhoto] = useState<string | null>(null);
@@ -57,7 +58,7 @@ const UniversityDetail: React.FC<UniversityDetailProps> = ({ universityId, slug,
       try {
         const { data: universities, error } = await supabase
           .from('Instituicoes')
-          .select('id, name, cidade, estado, tipo, website, vacancies, periodization, process, descricao, mensalidade, students, campus_name, endereco, numero_endereco, bairro, logo, mec_rating, regional_bonus, telefone, email, data_criacao, CPC, ranking');
+          .select('id, name, cidade, estado, tipo, website, Qt_Vagas_Autorizadas, Tipo_de_Periodicidade, descricao, mensalidade, Nome_do_Campus, endereco, numero_endereco, bairro, logo, Valor_CC, telefone, data_criacao, CPC, ranking');
 
         if (error) throw error;
 
@@ -97,32 +98,34 @@ const UniversityDetail: React.FC<UniversityDetailProps> = ({ universityId, slug,
               state: target.estado,
               type: target.tipo,
               website: target.website,
-              vacancies: target.vacancies || 'Não informado',
-              periodization: target.periodization || 'Semestral',
-              process: target.process || 'Vestibular/ENEM',
+              vacancies: target.Qt_Vagas_Autorizadas || 'Não informado',
+              periodization: target.Tipo_de_Periodicidade || 'Semestral',
+              process: 'Vestibular/ENEM', // Field not in DB
               description: target.descricao,
               mensalidade: target.mensalidade,
-              students: target.students || 'N/A',
-              campus_name: target.campus_name || '',
+              students: 'N/A', // Field not in DB
+              campus_name: target.Nome_do_Campus || '',
               address: target.endereco || '',
               address_number: target.numero_endereco || '',
               neighborhood: target.bairro || '',
               image: target.logo || 'https://s1.static.brasilescola.uol.com.br/be/vestibular/66f30f0386eaf116ba64518409582190.jpg',
-              mec_rating: target.mec_rating || '5',
-              regional_bonus: target.regional_bonus || 'Sim',
+              mec_rating: target.Valor_CC || '5',
+              regional_bonus: 'Sim', // Field not in DB
               phone: target.telefone || 'Não Informado',
-              email: target.email || 'Não Informado',
+              email: 'Não Informado', // Field not in DB
               creation_date: target.data_criacao ? new Date(target.data_criacao).getFullYear().toString() : 'Não informado',
               cpc: target.CPC || 'Não informado',
               ranking: target.ranking || 'Não informado'
             });
           } else {
+            console.log('Universidade não encontrada para o slug:', slug);
             setUniversity(null);
           }
         }
         setIsLoading(false);
-      } catch (error) {
+      } catch (error: any) {
         console.error('Erro ao buscar universidade:', error);
+        setErrorMessage(error.message || 'Erro desconhecido');
         setUniversity(null);
         setIsLoading(false);
       }
@@ -139,6 +142,12 @@ const UniversityDetail: React.FC<UniversityDetailProps> = ({ universityId, slug,
             <School className="w-10 h-10 text-red-600" />
           </div>
           <h2 className="text-3xl font-bold text-gray-900 mb-3">Universidade não encontrada</h2>
+          {errorMessage && (
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm break-words">
+              <p className="font-bold">Erro técnico:</p>
+              {errorMessage}
+            </div>
+          )}
           <p className="text-gray-600 mb-6">Não foi possível encontrar as informações desta universidade.</p>
           <button
             onClick={onBack}
