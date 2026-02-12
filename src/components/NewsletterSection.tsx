@@ -142,8 +142,8 @@ const NewsletterSection: React.FC = () => {
             </div>
 
             {/* Right Side - Form */}
-            <div className="bg-[#2854A2] flex flex-col justify-center min-h-[500px]">
-              <div className="w-full h-full">
+            <div className="bg-[#2854A2] flex flex-col justify-center lg:min-h-[500px]">
+              <div className="w-full lg:h-full">
                 <div role="main" id="catalogo-mem-d8ccd54a052a30050f2d"></div>
               </div>
             </div>
