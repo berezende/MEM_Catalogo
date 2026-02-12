@@ -31,6 +31,7 @@ const AnimatedText = React.forwardRef<HTMLDivElement, AnimatedTextProps>(
         underlineOffset = "-bottom-2",
         ...props
     }, ref) => {
+        const words = text.split(" ")
         const letters = Array.from(text)
 
         const container: Variants = {
@@ -94,12 +95,24 @@ const AnimatedText = React.forwardRef<HTMLDivElement, AnimatedTextProps>(
                         variants={container}
                         initial="hidden"
                         animate={replay ? "visible" : "hidden"}
-                        className={cn("flex flex-wrap justify-center overflow-hidden text-4xl font-bold text-center", textClassName)}
+                        className={cn("flex flex-wrap justify-center text-4xl font-bold text-center", textClassName)}
                     >
-                        {letters.map((letter, index) => (
-                            <motion.span key={index} variants={child}>
-                                {letter === " " ? "\u00A0" : letter}
-                            </motion.span>
+                        {words.map((word, wordIndex) => (
+                            <React.Fragment key={wordIndex}>
+                                <motion.div
+                                    className="flex whitespace-nowrap"
+                                    transition={{ staggerChildren: duration }}
+                                >
+                                    {Array.from(word).map((letter, letterIndex) => (
+                                        <motion.span key={letterIndex} variants={child}>
+                                            {letter}
+                                        </motion.span>
+                                    ))}
+                                </motion.div>
+                                {wordIndex < words.length - 1 && (
+                                    <span className="inline-block">&nbsp;</span>
+                                )}
+                            </React.Fragment>
                         ))}
                     </motion.div>
 
