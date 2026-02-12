@@ -35,15 +35,13 @@ const CatalogPage: React.FC<CatalogPageProps> = ({
   initialVisibleCount,
   initialScrollPosition
 }) => {
-  const searchFilters = React.useMemo(() => {
-    return (initialSearchTerm || initialCategory || initialState || initialCity) ? {
-      searchTerm: initialSearchTerm || '',
-      state: initialState || '',
-      city: initialCity || '',
-      type: initialCategory || '',
-      sortBy: 'name'
-    } : undefined;
-  }, [initialSearchTerm, initialCategory, initialState, initialCity]);
+  const searchFilters = React.useMemo(() => ({
+    searchTerm: initialSearchTerm || '',
+    state: initialState || '',
+    city: initialCity || '',
+    type: initialCategory || '',
+    sortBy: 'name'
+  }), [initialSearchTerm, initialCategory, initialState, initialCity]);
 
   const metaTitle = `MEM | Catálogo de Medicina${searchFilters?.state ? ` em ${searchFilters.city}, ${searchFilters.state}` : ''}${searchFilters?.city ? ` - ${searchFilters.city}` : ''}`;
   const metaDescription = `Confira a lista completa de Cursos de Medicina${searchFilters?.state ? ` em ${searchFilters.city}, ${searchFilters.state}` : ' no Brasil'}${searchFilters?.city ? `, ${searchFilters.city}` : ''}. Encontre a melhor opção para sua carreira médica.`;

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import UniversityCard from './UniversityCard';
 import { Search, MapPin, Filter, ChevronDown, X } from 'lucide-react';
-import Papa from 'papaparse';
+import { supabase } from '../lib/supabase';
 import { slugify } from '../utils/urlHelpers';
 
 interface UniversityCatalogProps {
@@ -65,30 +65,35 @@ const UniversityCatalog: React.FC<UniversityCatalogProps> = ({
   // Debounce ref for search
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Ref para manter valores atuais dos filtros (evita closure stale)
+  const filtersRef = useRef({ searchTerm, selectedState, selectedCity, selectedType });
+  useEffect(() => {
+    filtersRef.current = { searchTerm, selectedState, selectedCity, selectedType };
+  }, [searchTerm, selectedState, selectedCity, selectedType]);
+
   const notifyFilterChange = (updates: Partial<typeof searchFilters>) => {
     if (onFilterChange) {
+      const current = filtersRef.current;
       onFilterChange({
-        searchTerm,
-        state: selectedState,
-        city: selectedCity,
-        type: selectedType,
+        searchTerm: current.searchTerm,
+        state: current.selectedState,
+        city: current.selectedCity,
+        type: current.selectedType,
         ...updates
       } as any);
     }
   };
 
-  const CSV_URL = 'https://docs.google.com/spreadsheets/d/1m3bBtUxBAnZYhbgDpSaoyE_TuG8gLUXn9F-_ADTmNNk/export?format=csv';
-
-  // Inicializa os filtros quando searchFilters é fornecido (exceto cidade)
+  // Sincroniza os filtros locais com searchFilters (vindo da URL)
   useEffect(() => {
     if (searchFilters) {
-      if (searchFilters.searchTerm !== undefined) setSearchTerm(searchFilters.searchTerm);
-      if (searchFilters.state !== undefined) setSelectedState(searchFilters.state);
-      if (searchFilters.type !== undefined) setSelectedType(searchFilters.type);
+      setSearchTerm(searchFilters.searchTerm || '');
+      setSelectedState(searchFilters.state || '');
+      setSelectedType(searchFilters.type || '');
 
       // Se a cidade vier vazia no filtro, limpa localmente
       // Caso tenha valor, deixamos o useEffect abaixo lidar (para resolver o nome real)
-      if (searchFilters.city === '') {
+      if (!searchFilters.city) {
         setSelectedCity('');
       }
     }
@@ -147,35 +152,39 @@ const UniversityCatalog: React.FC<UniversityCatalogProps> = ({
       });
   }, [selectedState, stateIdMap]);
 
+  // Busca dados do Supabase
   useEffect(() => {
-    const fetchCSVData = async () => {
+    const fetchSupabaseData = async () => {
       try {
-        const response = await fetch(CSV_URL);
-        const csvText = await response.text();
+        const { data, error } = await supabase
+          .from('Instituicoes')
+          .select('id, name, cidade, estado, tipo, logo, ranking');
 
-        Papa.parse(csvText, {
-          header: true,
-          skipEmptyLines: true,
-          complete: (results) => {
-            const parsedData = results.data.map((row: any, index: number) => ({
-              id: index + 1,
-              name: row.name,
-              location: `${row.cidade}, ${row.estado}`,
-              state: row.estado,
-              city: row.cidade,
-              type: row.tipo,
-              image: row.logo || 'https://s1.static.brasilescola.uol.com.br/be/vestibular/66f30f0386eaf116ba64518409582190.jpg',
-              ranking: row.ranking
-            }));
-            setUniversities(parsedData);
-          }
-        });
+        if (error) {
+          console.error('Erro ao carregar dados do Supabase:', error);
+          return;
+        }
+
+        if (data) {
+          const parsedData = data.map((row: any, index: number) => ({
+            _uid: `${row.id}-${index}`,
+            id: row.id,
+            name: row.name,
+            location: `${row.cidade}, ${row.estado}`,
+            state: row.estado,
+            city: row.cidade,
+            type: row.tipo,
+            image: row.logo || 'https://s1.static.brasilescola.uol.com.br/be/vestibular/66f30f0386eaf116ba64518409582190.jpg',
+            ranking: row.ranking
+          }));
+          setUniversities(parsedData);
+        }
       } catch (error) {
-        console.error("Erro ao carregar dados da planilha:", error);
+        console.error('Erro ao carregar dados do Supabase:', error);
       }
     };
 
-    fetchCSVData();
+    fetchSupabaseData();
   }, []);
 
   useEffect(() => {
@@ -472,7 +481,7 @@ const UniversityCatalog: React.FC<UniversityCatalogProps> = ({
               <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 xl:grid-cols-3">
                 {visibleUniversities.map((university) => (
                   <UniversityCard
-                    key={university.id}
+                    key={university._uid}
                     {...university}
                     onViewDetails={(slug) => onUniversitySelect(slug, {
                       searchTerm,
