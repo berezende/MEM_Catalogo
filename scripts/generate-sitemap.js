@@ -16,7 +16,7 @@ const supabaseUrl = process.env.VITE_SUPABASE_URL;
 const supabaseKey = process.env.VITE_SUPABASE_ANON_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-const BASE_URL = 'https://catalogo-mem-main.vercel.app';
+const BASE_URL = 'https://catalogo.melhoresescolasmedicas.com';
 
 const slugify = (text) => {
     if (!text) return '';
