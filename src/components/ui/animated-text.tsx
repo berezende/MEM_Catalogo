@@ -91,11 +91,10 @@ const AnimatedText = React.forwardRef<HTMLDivElement, AnimatedTextProps>(
             >
                 <div className="relative">
                     <motion.div
-                        style={{ display: "flex", overflow: "hidden" }}
                         variants={container}
                         initial="hidden"
                         animate={replay ? "visible" : "hidden"}
-                        className={cn("text-4xl font-bold text-center", textClassName)}
+                        className={cn("flex flex-wrap justify-center overflow-hidden text-4xl font-bold text-center", textClassName)}
                     >
                         {letters.map((letter, index) => (
                             <motion.span key={index} variants={child}>

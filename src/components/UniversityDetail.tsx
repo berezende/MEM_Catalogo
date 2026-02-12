@@ -241,7 +241,7 @@ const UniversityDetail: React.FC<UniversityDetailProps> = ({ universityId, slug,
               {university.ranking && university.ranking !== 'Não informado' && (
                 <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-bold bg-amber-100 text-amber-700">
                   <Trophy className="w-4 h-4" />
-                  {university.ranking} no Ranking Oficial da Folha
+                  {university.ranking} no Ranking Universitário Folha
                 </span>
               )}
             </div>
