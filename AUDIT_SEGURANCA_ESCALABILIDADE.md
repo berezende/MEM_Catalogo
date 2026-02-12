@@ -253,14 +253,14 @@ Verifique se as imagens estão otimizadas (WebP/AVIF, compressão, dimensões ad
 
 ### Antes do Deploy (OBRIGATÓRIO):
 - [x] ~~**Substituir** o token real no `.env.example` por placeholders~~
-- [ ] **Revogar** o Cloudflare Tunnel Token exposto no histórico Git
-- [ ] **Verificar** RLS no Supabase (tabela `Instituicoes`)
+- [x] **Revogar** o Cloudflare Tunnel Token exposto no histórico Git
+- [x] **Verificar** RLS no Supabase (tabela `Instituicoes`)
 - [x] ~~**Unificar** o domínio canônico em todos os arquivos~~
 - [x] ~~**Atualizar** `generate-sitemap.js` com a BASE_URL correta~~
 - [x] ~~**Atualizar** `robots.txt` com a URL correta do sitemap~~
-- [ ] **Configurar** variáveis de ambiente no Vercel (não commitá-las)
+- [x] **Configurar** variáveis de ambiente no Vercel (não commitá-las)
 - [x] ~~**Remover** console.logs de produção~~
-- [ ] **Substituir** o WhatsApp placeholder por número real
+- [x] **Substituir** o WhatsApp placeholder por número real
 - [x] ~~**Adicionar** headers de segurança (CSP, X-Frame-Options, etc.)~~
 - [x] ~~**Remover** papaparse das dependências~~
 - [x] ~~**Implementar** code splitting com React.lazy~~
