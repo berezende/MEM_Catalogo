@@ -2,13 +2,16 @@
   "name": "vite-react-typescript-starter",
   "private": true,
   "version": "0.0.0",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "npm run generate-sitemap && vite build",
+    "dev": "node server/index.js",
+    "build": "npm run generate-sitemap && vite build && vite build --ssr",
     "generate-sitemap": "node scripts/generate-sitemap.js",
     "lint": "eslint .",
-    "start": "vite preview --host --port 5173"
+    "start": "cross-env NODE_ENV=production node server/index.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.95.3",
