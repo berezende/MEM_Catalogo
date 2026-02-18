@@ -30,8 +30,6 @@
     }
   },
   "include": [
-    "src",
-    "renderer",
-    "pages"
+    "src"
   ]
 }
