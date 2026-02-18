@@ -82,7 +82,7 @@ const HomePage: React.FC = () => {
         description="O guia mais completo de cursos de medicina do Brasil. Compare universidades públicas e particulares, veja notas de corte, mensalidades, rankings e descubra a faculdade de medicina ideal para sua carreira."
         type="website"
         keywords="faculdade de medicina, curso de medicina, vestibular medicina, medicina no Brasil, universidades de medicina, melhores escolas médicas, nota de corte medicina, ENEM medicina, SISU medicina"
-        canonical="https://catalogo.melhoresescolasmedicas.com/"
+        canonical="https://guia.melhoresescolasmedicas.com/"
       />
       <Hero onSearch={handleSearch} />
       <FeaturedUniversities onUniversitySelect={handleUniversitySelect} />
