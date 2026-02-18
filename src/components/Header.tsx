@@ -34,7 +34,7 @@ const Header: React.FC<HeaderProps> = ({ onNavigateHome }) => {
             </a>
             <a
               href="https://melhoresescolasmedicas.com/"
-              className="text-[#C2FF3A] hover:text-white transition-colors text-xs lg:text-sm font-medium"
+              className="text-white hover:text-[#C2FF3A] transition-colors text-xs lg:text-sm font-medium"
             >
               Notícias
             </a>
@@ -143,7 +143,7 @@ const Header: React.FC<HeaderProps> = ({ onNavigateHome }) => {
               </a>
               <a
                 href="https://melhoresescolasmedicas.com/"
-                className="text-[#C2FF3A] hover:text-white transition-colors text-sm font-medium"
+                className="text-white hover:text-[#C2FF3A] transition-colors text-sm font-medium"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Notícias
