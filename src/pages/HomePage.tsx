@@ -8,6 +8,7 @@ import NewsletterSection from '../components/NewsletterSection';
 import NewsSection from '../components/NewsSection';
 
 import SEO from '../components/SEO';
+import doctorGroupImg from '../assets/doctor-group1.png';
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
@@ -77,7 +78,7 @@ const HomePage: React.FC = () => {
   return (
     <div className="min-h-screen bg-white">
       <SEO
-        title="MEM | Catálogo de Medicina - Encontre seu Curso de Medicina no Brasil"
+        title="MEM | Catálogo de Medicina"
         description="O guia mais completo de cursos de medicina do Brasil. Compare universidades públicas e particulares, veja notas de corte, mensalidades, rankings e descubra a faculdade de medicina ideal para sua carreira."
         type="website"
         keywords="faculdade de medicina, curso de medicina, vestibular medicina, medicina no Brasil, universidades de medicina, melhores escolas médicas, nota de corte medicina, ENEM medicina, SISU medicina"
@@ -116,9 +117,9 @@ const HomePage: React.FC = () => {
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl transform rotate-3 group-hover:rotate-6 transition-all duration-500"></div>
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-indigo-400 rounded-2xl transform -rotate-6 opacity-50 group-hover:opacity-70 transition-all duration-500"></div>
                 <img
-                  src="https://images.pexels.com/photos/3184360/pexels-photo-3184360.jpeg?auto=compress&cs=tinysrgb&w=600"
-                  alt="Estudante sorrindo com mochila"
-                  className="relative w-full h-64 sm:h-80 md:h-96 object-cover rounded-2xl shadow-2xl transform group-hover:scale-110 group-hover:rotate-2 transition-all duration-500"
+                  src={doctorGroupImg}
+                  alt="Equipe Melhores Escolas Médicas"
+                  className="relative w-full h-64 sm:h-80 md:h-96 object-cover rounded-2xl shadow-2xl transform group-hover:scale-105 transition-all duration-500"
                 />
               </div>
             </div>
