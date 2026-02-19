@@ -26,6 +26,7 @@ interface UniversityCatalogProps {
   };
   initialVisibleCount?: number;
   initialScrollPosition?: number;
+  initialUniversities?: any[];
 }
 
 interface IBGEState {
@@ -43,11 +44,22 @@ const UniversityCatalog: React.FC<UniversityCatalogProps> = ({
   onFilterChange,
   searchFilters,
   initialVisibleCount = 6,
-  initialScrollPosition = 0
+  initialScrollPosition = 0,
+  initialUniversities
 }) => {
   const [viewType, setViewType] = useState('grid');
   const [sortBy, setSortBy] = useState('name');
-  const [universities, setUniversities] = useState<any[]>([]);
+  const [universities, setUniversities] = useState<any[]>(initialUniversities ? initialUniversities.map((row: any, index: number) => ({
+    _uid: `${row.id}-${index}`,
+    id: row.id,
+    name: row.name,
+    location: `${row.cidade}, ${row.estado}`,
+    state: row.estado,
+    city: row.cidade,
+    type: row.tipo,
+    image: row.logo || 'https://s1.static.brasilescola.uol.com.br/be/vestibular/66f30f0386eaf116ba64518409582190.jpg',
+    ranking: row.ranking
+  })) : []);
   const [filteredUniversities, setFilteredUniversities] = useState<any[]>([]);
   const [visibleCount, setVisibleCount] = useState(initialVisibleCount);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
@@ -154,6 +166,9 @@ const UniversityCatalog: React.FC<UniversityCatalogProps> = ({
 
   // Busca dados do Supabase
   useEffect(() => {
+    // Só buscar se não tiver initialUniversities
+    if (initialUniversities && initialUniversities.length > 0) return;
+
     const fetchSupabaseData = async () => {
       try {
         const { data, error } = await supabase

@@ -5,6 +5,7 @@ import { slugify } from '../utils/urlHelpers';
 
 interface FeaturedUniversitiesProps {
   onUniversitySelect: (slug: string, state?: string, city?: string) => void;
+  initialData?: any[];
 }
 
 interface University {
@@ -18,7 +19,7 @@ interface University {
 
 
 
-const FeaturedUniversities: React.FC<FeaturedUniversitiesProps> = ({ onUniversitySelect }) => {
+const FeaturedUniversities: React.FC<FeaturedUniversitiesProps> = ({ onUniversitySelect, initialData }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [_itemsPerView, setItemsPerView] = useState(4);
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -26,8 +27,20 @@ const FeaturedUniversities: React.FC<FeaturedUniversitiesProps> = ({ onUniversit
   const [dragStart, setDragStart] = useState<number | null>(null);
   const [dragOffset, setDragOffset] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
-  const [featuredUniversities, setFeaturedUniversities] = useState<University[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [featuredUniversities, setFeaturedUniversities] = useState<University[]>(() => {
+    if (initialData && initialData.length > 0) {
+      return initialData.map((row: any) => ({
+        id: row.id,
+        name: row.name,
+        location: `${row.cidade}, ${row.estado}`,
+        state: row.estado,
+        city: row.cidade,
+        image: row.logo || 'https://s1.static.brasilescola.uol.com.br/be/vestibular/66f30f0386eaf116ba64518409582190.jpg'
+      }));
+    }
+    return [];
+  });
+  const [isLoading, setIsLoading] = useState(!initialData || initialData.length === 0);
 
   // Trigger animação de entrada
   useEffect(() => {
@@ -37,6 +50,9 @@ const FeaturedUniversities: React.FC<FeaturedUniversitiesProps> = ({ onUniversit
 
   // Carrega as universidades da planilha
   useEffect(() => {
+    // Só buscar se não tiver initialData
+    if (initialData && initialData.length > 0) return;
+
     const fetchUniversities = async () => {
       try {
         const { data: universities, error } = await supabase

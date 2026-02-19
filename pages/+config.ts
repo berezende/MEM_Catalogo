@@ -6,4 +6,5 @@ export default {
     extends: vikeReact,
     ssr: true,
     stream: true,
+    passToClient: ['pageProps', 'routeParams'],
 } satisfies Config;

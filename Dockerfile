@@ -6,15 +6,19 @@ RUN npm ci
 COPY . .
 RUN npm run build
 
-# Production Stage to serve with Nginx
-FROM nginx:alpine
-# Copy the built files from the builder stage
-# IMPORTANT: The build output is in dist (from vite.config.ts)
-# We copy it to /usr/share/nginx/html to match the root in nginx.conf
-COPY --from=builder /app/dist /usr/share/nginx/html
+# Production Stage
+FROM node:20-alpine AS runner
+WORKDIR /app
 
-# Copy our custom Nginx config
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+ENV NODE_ENV=production
+ENV PORT=3000
 
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/server ./server
+COPY --from=builder /app/package*.json ./
+
+RUN npm ci --omit=dev
+
+EXPOSE 3000
+
+CMD ["node", "dist/server/index.js"]

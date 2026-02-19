@@ -6,9 +6,11 @@
   "scripts": {
     "dev": "vite",
     "build": "npm run generate-sitemap && vite build",
+    "preview": "cross-env NODE_ENV=production tsx server/index.ts",
+    "server:dev": "tsx server/index.ts",
+    "server:prod": "node dist/server/index.js",
     "generate-sitemap": "node scripts/generate-sitemap.js",
-    "lint": "eslint .",
-    "start": "vite preview --host --port 5173"
+    "lint": "eslint ."
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.95.3",
@@ -21,8 +23,6 @@
     "lucide-react": "^0.344.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-helmet-async": "^2.0.5",
-    "react-router-dom": "^7.10.1",
     "sirv": "^3.0.2",
     "tailwind-merge": "^3.4.0",
     "vike": "^0.4.253",
