@@ -8,7 +8,7 @@
     "build": "npm run generate-sitemap && vite build && node scripts/post-build.js",
     "preview": "cross-env NODE_ENV=production tsx server/index.ts",
     "server:dev": "tsx server/index.ts",
-    "server:prod": "node dist/server/index.js",
+    "server:prod": "cross-env NODE_ENV=production tsx server/index.ts",
     "generate-sitemap": "node scripts/generate-sitemap.js",
     "lint": "eslint ."
   },

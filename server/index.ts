@@ -22,7 +22,7 @@ async function startServer() {
         app.use(vite.middlewares);
     }
 
-    app.get('*', async (req, res, next) => {
+    app.get('{/*path}', async (req, res, next) => {
         const pageContextInit = { urlOriginal: req.originalUrl };
         const pageContext = await renderPage(pageContextInit);
 
