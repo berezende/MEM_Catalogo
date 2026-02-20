@@ -1,7 +1,6 @@
 import express from 'express';
 import compression from 'compression';
 import { renderPage } from 'vike/server';
-import { createServer as createViteServer } from 'vite';
 
 const isProduction = process.env.NODE_ENV === 'production';
 const port = process.env.PORT || 3000;
@@ -15,6 +14,7 @@ async function startServer() {
         const sirv = (await import('sirv')).default;
         app.use(sirv('dist/client', { extensions: [] }));
     } else {
+        const { createServer: createViteServer } = await import('vite');
         const vite = await createViteServer({
             server: { middlewareMode: true },
             appType: 'custom'
