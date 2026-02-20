@@ -9,6 +9,7 @@
     "preview": "cross-env NODE_ENV=production tsx server/index.ts",
     "server:dev": "tsx server/index.ts",
     "server:prod": "cross-env NODE_ENV=production tsx server/index.ts",
+    "start": "npm run server:prod",
     "generate-sitemap": "node scripts/generate-sitemap.js",
     "lint": "eslint ."
   },

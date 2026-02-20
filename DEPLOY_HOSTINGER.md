@@ -49,7 +49,7 @@ No painel de controle da Hostinger (hPanel):
 1.  Vá em **Avançado > Node.js**.
 2.  **Versão do Node**: Selecione **20 ou superior**.
 3.  **Diretório do App**: Onde você subiu os arquivos.
-4.  **Comando de Execução**: Configure para usar o script do NPM: `npm run server:prod`.
+4.  **Comando de Execução**: Utilize o comando padrão **`npm start`**. Eu adicionei esse script ao seu `package.json` e ele chamará automaticamente o servidor em modo de produção.
 
 ---
 
@@ -62,7 +62,7 @@ No painel de controle da Hostinger (hPanel):
     ```
 *   **Para rodar em produção (Hostinger):**
     ```bash
-    npm run server:prod
+    npm start
     ```
 
 ---
