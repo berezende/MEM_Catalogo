@@ -1,0 +1,125 @@
+{
+  "_chunk-B9bfo-Uh.js": {
+    "file": "assets/chunks/chunk-B9bfo-Uh.js",
+    "name": "school",
+    "imports": [
+      "_chunk-LOchvrxB.js"
+    ]
+  },
+  "_chunk-Bg5VY5Ee.js": {
+    "file": "assets/chunks/chunk-Bg5VY5Ee.js",
+    "name": "users",
+    "imports": [
+      "_chunk-LOchvrxB.js"
+    ]
+  },
+  "_chunk-Chflhp3s.js": {
+    "file": "assets/chunks/chunk-Chflhp3s.js",
+    "name": "renderPageClient"
+  },
+  "_chunk-Dsq9SuiG.js": {
+    "file": "assets/chunks/chunk-Dsq9SuiG.js",
+    "name": "urlHelpers",
+    "imports": [
+      "_chunk-LOchvrxB.js"
+    ]
+  },
+  "_chunk-LOchvrxB.js": {
+    "file": "assets/chunks/chunk-LOchvrxB.js",
+    "name": "Loading",
+    "imports": [
+      "_chunk-Chflhp3s.js"
+    ],
+    "css": [
+      "assets/static/vike-react-b64a028b.BcWtY8Ol.css",
+      "assets/static/src_index-b3c78705.K3oEMG7c.css"
+    ]
+  },
+  "_src_index-b3c78705.K3oEMG7c.css": {
+    "file": "assets/static/src_index-b3c78705.K3oEMG7c.css",
+    "src": "_src_index-b3c78705.K3oEMG7c.css"
+  },
+  "_vike-react-b64a028b.BcWtY8Ol.css": {
+    "file": "assets/static/vike-react-b64a028b.BcWtY8Ol.css",
+    "src": "_vike-react-b64a028b.BcWtY8Ol.css"
+  },
+  "node_modules/vike/dist/client/runtime-client-routing/entry.js": {
+    "file": "assets/entries/entry-client-routing.Cdi01Bn1.js",
+    "name": "entries/entry-client-routing",
+    "src": "node_modules/vike/dist/client/runtime-client-routing/entry.js",
+    "isEntry": true,
+    "imports": [
+      "_chunk-Chflhp3s.js"
+    ],
+    "dynamicImports": [
+      "virtual:vike:page-entry:client:/pages/index",
+      "virtual:vike:page-entry:client:/pages/cursos",
+      "virtual:vike:page-entry:client:/pages/cursos/@state/@city/@slug"
+    ]
+  },
+  "src/assets/banner_mem.jpg": {
+    "file": "assets/static/banner_mem.BkP88hwf.jpg",
+    "src": "src/assets/banner_mem.jpg"
+  },
+  "src/assets/doctor-group1.png": {
+    "file": "assets/static/doctor-group1.DbdYUOtH.png",
+    "src": "src/assets/doctor-group1.png"
+  },
+  "virtual:vike:page-entry:client:/pages/cursos": {
+    "file": "assets/entries/pages_cursos.C6Uoz0B3.js",
+    "name": "entries/pages/cursos",
+    "src": "virtual:vike:page-entry:client:/pages/cursos",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_chunk-LOchvrxB.js",
+      "_chunk-Dsq9SuiG.js",
+      "_chunk-B9bfo-Uh.js",
+      "_chunk-Chflhp3s.js"
+    ],
+    "css": [
+      "assets/static/vike-react-b64a028b.BcWtY8Ol.css",
+      "assets/static/src_index-b3c78705.K3oEMG7c.css"
+    ]
+  },
+  "virtual:vike:page-entry:client:/pages/cursos/@state/@city/@slug": {
+    "file": "assets/entries/pages_cursos_-state_-city_-slug.CmiVCC7E.js",
+    "name": "entries/pages/cursos/@state/@city/@slug",
+    "src": "virtual:vike:page-entry:client:/pages/cursos/@state/@city/@slug",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_chunk-LOchvrxB.js",
+      "_chunk-B9bfo-Uh.js",
+      "_chunk-Bg5VY5Ee.js",
+      "_chunk-Chflhp3s.js"
+    ],
+    "css": [
+      "assets/static/vike-react-b64a028b.BcWtY8Ol.css",
+      "assets/static/src_index-b3c78705.K3oEMG7c.css"
+    ],
+    "assets": [
+      "assets/static/banner_mem.BkP88hwf.jpg"
+    ]
+  },
+  "virtual:vike:page-entry:client:/pages/index": {
+    "file": "assets/entries/pages_index.B3Gw9EAe.js",
+    "name": "entries/pages/index",
+    "src": "virtual:vike:page-entry:client:/pages/index",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_chunk-LOchvrxB.js",
+      "_chunk-Dsq9SuiG.js",
+      "_chunk-Bg5VY5Ee.js",
+      "_chunk-Chflhp3s.js"
+    ],
+    "css": [
+      "assets/static/vike-react-b64a028b.BcWtY8Ol.css",
+      "assets/static/src_index-b3c78705.K3oEMG7c.css"
+    ],
+    "assets": [
+      "assets/static/doctor-group1.DbdYUOtH.png"
+    ]
+  }
+}
