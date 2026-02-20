@@ -30,22 +30,9 @@ export default function CatalogPage() {
         }
     };
 
-    const handleFilterChange = (newFilters: any) => {
-        let newPath = '/cursos';
-
-        if (newFilters.searchTerm) {
-            newPath = `/cursos/q=${encodeURIComponent(newFilters.searchTerm)}`;
-        } else if (newFilters.state) {
-            newPath = `/cursos/${slugify(newFilters.state)}`;
-            if (newFilters.city) {
-                newPath += `/${slugify(newFilters.city)}`;
-            }
-        } else if (newFilters.type) {
-            const typeSlug = newFilters.type === 'Pública' ? 'publica' : 'particular';
-            newPath = `/cursos/${typeSlug}`;
-        }
-
-        window.location.href = newPath;
+    // Filtros são aplicados localmente sem recarregar a página
+    const handleFilterChange = (_newFilters: any) => {
+        // Filtros gerenciados localmente no UniversityCatalog, sem navegação
     };
 
     return (

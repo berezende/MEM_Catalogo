@@ -47,7 +47,6 @@ const UniversityCatalog: React.FC<UniversityCatalogProps> = ({
   initialScrollPosition = 0,
   initialUniversities
 }) => {
-  const [viewType, setViewType] = useState('grid');
   const [sortBy, setSortBy] = useState('name');
   const [universities, setUniversities] = useState<any[]>(initialUniversities ? initialUniversities.map((row: any, index: number) => ({
     _uid: `${row.id}-${index}`,
@@ -74,34 +73,71 @@ const UniversityCatalog: React.FC<UniversityCatalogProps> = ({
   const [cities, setCities] = useState<string[]>([]);
   const [stateIdMap, setStateIdMap] = useState<{ [nome: string]: number }>({});
 
-  // Debounce ref for search
-  const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  // Debounce ref para atualização de URL na pesquisa de texto
+  const urlUpdateTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  // URL de pesquisa com debounce (para não mudar a URL a cada letra)
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchFilters?.searchTerm || '');
 
-  // Ref para manter valores atuais dos filtros (evita closure stale)
-  const filtersRef = useRef({ searchTerm, selectedState, selectedCity, selectedType });
-  useEffect(() => {
-    filtersRef.current = { searchTerm, selectedState, selectedCity, selectedType };
-  }, [searchTerm, selectedState, selectedCity, selectedType]);
+  // Constrói a URL com base nos filtros ativos
+  const buildFilterUrl = (
+    type: string,
+    state: string,
+    city: string,
+    search: string
+  ) => {
+    const typeSlug = type === 'Pública' ? 'publica' : type === 'Particular' ? 'particular' : '';
+    const stateSlug = state ? slugify(state) : '';
+    const citySlug = city ? slugify(city) : '';
 
-  const notifyFilterChange = (updates: Partial<typeof searchFilters>) => {
-    if (onFilterChange) {
-      const current = filtersRef.current;
-      onFilterChange({
-        searchTerm: current.searchTerm,
-        state: current.selectedState,
-        city: current.selectedCity,
-        type: current.selectedType,
-        ...updates
-      } as any);
+    if (search) {
+      // Pesquisa por texto: base é /cursos/q=..., filtros extras vão como query params
+      let url = `/cursos/q=${encodeURIComponent(search)}`;
+      const params = new URLSearchParams();
+      if (typeSlug) params.set('type', typeSlug);
+      if (stateSlug) params.set('state', stateSlug);
+      if (citySlug) params.set('city', citySlug);
+      const qs = params.toString();
+      return qs ? `${url}?${qs}` : url;
     }
+
+    if (typeSlug) {
+      // /cursos/publica
+      // /cursos/publica/sergipe
+      // /cursos/publica/sergipe/aracaju
+      let url = `/cursos/${typeSlug}`;
+      if (stateSlug) url += `/${stateSlug}`;
+      if (stateSlug && citySlug) url += `/${citySlug}`;
+      return url;
+    }
+
+    if (stateSlug) {
+      // /cursos/sergipe
+      // /cursos/sergipe/aracaju
+      let url = `/cursos/${stateSlug}`;
+      if (citySlug) url += `/${citySlug}`;
+      return url;
+    }
+
+    return '/cursos';
+  };
+
+
+  // Normaliza o tipo vindo da URL (slug) para o valor real do banco
+  const normalizeType = (type: string) => {
+    if (type === 'publica') return 'Pública';
+    if (type === 'particular') return 'Particular';
+    return type;
   };
 
   // Sincroniza os filtros locais com searchFilters (vindo da URL)
+  // Só executa uma vez na montagem inicial
+  const didInitRef = useRef(false);
   useEffect(() => {
-    if (searchFilters) {
+    if (searchFilters && !didInitRef.current) {
+      didInitRef.current = true;
       setSearchTerm(searchFilters.searchTerm || '');
       setSelectedState(searchFilters.state || '');
-      setSelectedType(searchFilters.type || '');
+      setSelectedType(normalizeType(searchFilters.type || ''));
 
       // Se a cidade vier vazia no filtro, limpa localmente
       // Caso tenha valor, deixamos o useEffect abaixo lidar (para resolver o nome real)
@@ -124,6 +160,27 @@ const UniversityCatalog: React.FC<UniversityCatalogProps> = ({
       setSelectedCity(current => current !== cityToSet ? cityToSet : current);
     }
   }, [searchFilters, cities]);
+
+  // Atualiza a URL silenciosamente quando os filtros mudam (sem recarregar a página)
+  // Pesquisa usa debounce de 500ms; demais filtros atualizam imediatamente
+  useEffect(() => {
+    if (!didInitRef.current) return;
+    if (urlUpdateTimeoutRef.current) clearTimeout(urlUpdateTimeoutRef.current);
+    urlUpdateTimeoutRef.current = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 500);
+  }, [searchTerm]);
+
+  useEffect(() => {
+    // Não atualiza na montagem inicial
+    if (!didInitRef.current) return;
+
+    const newUrl = buildFilterUrl(selectedType, selectedState, selectedCity, debouncedSearchTerm);
+    const currentUrl = window.location.pathname + window.location.search;
+    if (currentUrl !== newUrl) {
+      history.pushState(null, '', newUrl);
+    }
+  }, [selectedType, selectedState, selectedCity, debouncedSearchTerm]);
 
   // Carrega os estados do IBGE
   useEffect(() => {
@@ -270,6 +327,7 @@ const UniversityCatalog: React.FC<UniversityCatalogProps> = ({
 
   const handleClearFilters = () => {
     setSearchTerm('');
+    setDebouncedSearchTerm('');
     setSelectedState('');
     setSelectedCity('');
     setSelectedType('');
@@ -335,10 +393,6 @@ const UniversityCatalog: React.FC<UniversityCatalogProps> = ({
                     onChange={(e) => {
                       const val = e.target.value;
                       setSearchTerm(val);
-                      if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
-                      searchTimeoutRef.current = setTimeout(() => {
-                        notifyFilterChange({ searchTerm: val });
-                      }, 500);
                     }}
                     className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 text-sm font-medium hover:border-gray-300"
                   />
@@ -359,7 +413,6 @@ const UniversityCatalog: React.FC<UniversityCatalogProps> = ({
                       checked={selectedType === ''}
                       onChange={(e) => {
                         setSelectedType(e.target.value);
-                        notifyFilterChange({ type: e.target.value });
                       }}
                       className="w-5 h-5 text-blue-600 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 cursor-pointer"
                     />
@@ -373,7 +426,6 @@ const UniversityCatalog: React.FC<UniversityCatalogProps> = ({
                       checked={selectedType === 'Pública'}
                       onChange={(e) => {
                         setSelectedType(e.target.value);
-                        notifyFilterChange({ type: e.target.value });
                       }}
                       className="w-5 h-5 text-blue-600 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 cursor-pointer"
                     />
@@ -387,7 +439,6 @@ const UniversityCatalog: React.FC<UniversityCatalogProps> = ({
                       checked={selectedType === 'Particular'}
                       onChange={(e) => {
                         setSelectedType(e.target.value);
-                        notifyFilterChange({ type: e.target.value });
                       }}
                       className="w-5 h-5 text-blue-600 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 cursor-pointer"
                     />
@@ -408,7 +459,6 @@ const UniversityCatalog: React.FC<UniversityCatalogProps> = ({
                     onChange={(e) => {
                       setSelectedState(e.target.value);
                       setSelectedCity('');
-                      notifyFilterChange({ state: e.target.value, city: '' });
                     }}
                     className="w-full pl-12 pr-10 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 appearance-none text-sm font-medium hover:border-gray-300 cursor-pointer"
                   >
@@ -432,7 +482,6 @@ const UniversityCatalog: React.FC<UniversityCatalogProps> = ({
                     value={selectedCity}
                     onChange={(e) => {
                       setSelectedCity(e.target.value);
-                      notifyFilterChange({ city: e.target.value });
                     }}
                     className="w-full pl-12 pr-10 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 appearance-none text-sm font-medium hover:border-gray-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                     disabled={!selectedState}
