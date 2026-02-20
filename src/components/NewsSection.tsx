@@ -62,8 +62,6 @@ const NewsSection: React.FC = () => {
             <a
               key={article.id}
               href={article.url}
-              target="_blank"
-              rel="noopener noreferrer"
               className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 cursor-pointer group block"
             >
               {/* Image */}
@@ -118,10 +116,8 @@ const NewsSection: React.FC = () => {
 
         {/* Ver mais button */}
         <div className="text-center mt-12">
-          <a 
-            href="https://melhoresescolasmedicas.com/" 
-            target="_blank" 
-            rel="noopener noreferrer"
+          <a
+            href="https://melhoresescolasmedicas.com/"
             className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-full hover:from-blue-700 hover:to-indigo-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
           >
             Ver todas as notícias

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import UniversityCard from './UniversityCard';
 import { Search, MapPin, Filter, ChevronDown, X } from 'lucide-react';
 import { supabase } from '../lib/supabase';
-import { slugify } from '../utils/urlHelpers';
+import { slugify, getOriginalStateName } from '../utils/urlHelpers';
 
 interface UniversityCatalogProps {
   onUniversitySelect: (slug: string, currentFilters: {
@@ -39,16 +39,17 @@ interface IBGECity {
   nome: string;
 }
 
-const UniversityCatalog: React.FC<UniversityCatalogProps> = ({
-  onUniversitySelect,
-  onFilterChange,
-  searchFilters,
-  initialVisibleCount = 6,
-  initialScrollPosition = 0,
-  initialUniversities
-}) => {
-  const [sortBy, setSortBy] = useState('name');
-  const [universities, setUniversities] = useState<any[]>(initialUniversities ? initialUniversities.map((row: any, index: number) => ({
+// Normaliza o slug do tipo (vindo da URL) para o valor real do banco.
+// Usada tanto na inicialização síncrona quanto no componente.
+function normalizeTypeSlug(type: string): string {
+  if (type === 'publica') return 'Pública';
+  if (type === 'particular') return 'Particular';
+  return type;
+}
+
+// Mapeia os dados brutos do servidor para o formato interno do componente.
+function parseUniversityRows(rows: any[]): any[] {
+  return rows.map((row: any, index: number) => ({
     _uid: `${row.id}-${index}`,
     id: row.id,
     name: row.name,
@@ -58,17 +59,80 @@ const UniversityCatalog: React.FC<UniversityCatalogProps> = ({
     type: row.tipo,
     image: row.logo || 'https://s1.static.brasilescola.uol.com.br/be/vestibular/66f30f0386eaf116ba64518409582190.jpg',
     ranking: row.ranking
-  })) : []);
-  const [filteredUniversities, setFilteredUniversities] = useState<any[]>([]);
+  }));
+}
+
+// Aplica os filtros da URL de forma **síncrona**, antes do primeiro render.
+// Isso garante que o servidor (SSR) produza o HTML correto com os cards já visíveis.
+// IMPORTANTE: state e city chegam como SLUGS da URL (ex: 'paraiba', 'joao-pessoa'),
+// então comparamos usando slugify() de ambos os lados para que 'paraiba' === slugify('Paraíba').
+function computeInitialFiltered(
+  universities: any[],
+  searchFilters?: UniversityCatalogProps['searchFilters']
+): any[] {
+  if (!searchFilters) return [...universities];
+
+  let filtered = [...universities];
+  const term = searchFilters.searchTerm || '';
+  const stateSlug = slugify(searchFilters.state || '');
+  const citySlug = slugify(searchFilters.city || '');
+  const type = normalizeTypeSlug(searchFilters.type || '');
+
+  if (term) {
+    const lower = term.toLowerCase();
+    filtered = filtered.filter(u =>
+      u.name.toLowerCase().includes(lower) ||
+      u.state.toLowerCase().includes(lower) ||
+      u.city.toLowerCase().includes(lower) ||
+      u.location.toLowerCase().includes(lower)
+    );
+  }
+  if (stateSlug) {
+    // Compara slug do estado do banco com slug da URL (ex: slugify('Paraíba') === 'paraiba')
+    filtered = filtered.filter(u => slugify(u.state) === stateSlug);
+  }
+  if (citySlug) {
+    // Compara slug da cidade do banco com slug da URL
+    filtered = filtered.filter(u => slugify(u.city) === citySlug);
+  }
+  if (type) {
+    filtered = filtered.filter(u => u.type === type);
+  }
+
+  filtered.sort((a, b) => a.name.localeCompare(b.name));
+  return filtered;
+}
+
+const UniversityCatalog: React.FC<UniversityCatalogProps> = ({
+  onUniversitySelect,
+  onFilterChange,
+  searchFilters,
+  initialVisibleCount = 6,
+  initialScrollPosition = 0,
+  initialUniversities
+}) => {
+  const [sortBy, setSortBy] = useState('name');
+  const [universities, setUniversities] = useState<any[]>(
+    initialUniversities ? parseUniversityRows(initialUniversities) : []
+  );
+  // ✅ CORREÇÃO SSR: computeInitialFiltered roda de forma SÍNCRONA,
+  // então o servidor já gera o HTML com os cards corretos na primeira renderização.
+  const [filteredUniversities, setFilteredUniversities] = useState<any[]>(() => {
+    const parsed = initialUniversities ? parseUniversityRows(initialUniversities) : [];
+    return computeInitialFiltered(parsed, searchFilters);
+  });
   const [visibleCount, setVisibleCount] = useState(initialVisibleCount);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const isInitialMount = useRef(true);
 
   // Estados para os filtros na sidebar
   const [searchTerm, setSearchTerm] = useState(searchFilters?.searchTerm || '');
-  const [selectedState, setSelectedState] = useState(searchFilters?.state || '');
+  // selectedState: resolve o slug da URL para o nome real do estado (ex: 'paraiba' → 'Paraíba')
+  const [selectedState, setSelectedState] = useState(
+    getOriginalStateName(searchFilters?.state || '') || searchFilters?.state || ''
+  );
   const [selectedCity, setSelectedCity] = useState(searchFilters?.city || '');
-  const [selectedType, setSelectedType] = useState(searchFilters?.type || '');
+  const [selectedType, setSelectedType] = useState(normalizeTypeSlug(searchFilters?.type || ''));
   const [states, setStates] = useState<string[]>([]);
   const [cities, setCities] = useState<string[]>([]);
   const [stateIdMap, setStateIdMap] = useState<{ [nome: string]: number }>({});
@@ -90,14 +154,13 @@ const UniversityCatalog: React.FC<UniversityCatalogProps> = ({
     const citySlug = city ? slugify(city) : '';
 
     if (search) {
-      // Pesquisa por texto: base é /cursos/q=..., filtros extras vão como query params
-      let url = `/cursos/q=${encodeURIComponent(search)}`;
+      // Pesquisa por texto: usa query string real → /cursos?q=medicina
       const params = new URLSearchParams();
+      params.set('q', search);
       if (typeSlug) params.set('type', typeSlug);
       if (stateSlug) params.set('state', stateSlug);
       if (citySlug) params.set('city', citySlug);
-      const qs = params.toString();
-      return qs ? `${url}?${qs}` : url;
+      return `/cursos?${params.toString()}`;
     }
 
     if (typeSlug) {
@@ -122,12 +185,7 @@ const UniversityCatalog: React.FC<UniversityCatalogProps> = ({
   };
 
 
-  // Normaliza o tipo vindo da URL (slug) para o valor real do banco
-  const normalizeType = (type: string) => {
-    if (type === 'publica') return 'Pública';
-    if (type === 'particular') return 'Particular';
-    return type;
-  };
+
 
   // Sincroniza os filtros locais com searchFilters (vindo da URL)
   // Só executa uma vez na montagem inicial
@@ -136,8 +194,9 @@ const UniversityCatalog: React.FC<UniversityCatalogProps> = ({
     if (searchFilters && !didInitRef.current) {
       didInitRef.current = true;
       setSearchTerm(searchFilters.searchTerm || '');
-      setSelectedState(searchFilters.state || '');
-      setSelectedType(normalizeType(searchFilters.type || ''));
+      // Resolve o slug do estado (ex: 'paraiba') para o nome real ('Paraíba')
+      setSelectedState(getOriginalStateName(searchFilters.state || '') || searchFilters.state || '');
+      setSelectedType(normalizeTypeSlug(searchFilters.type || ''));
 
       // Se a cidade vier vazia no filtro, limpa localmente
       // Caso tenha valor, deixamos o useEffect abaixo lidar (para resolver o nome real)
@@ -273,7 +332,7 @@ const UniversityCatalog: React.FC<UniversityCatalogProps> = ({
       );
     }
     if (selectedState) {
-      filtered = filtered.filter(uni => uni.state === selectedState);
+      filtered = filtered.filter(uni => uni.state === selectedState || slugify(uni.state) === slugify(selectedState));
     }
     if (selectedCity) {
       filtered = filtered.filter(uni => uni.city === selectedCity || slugify(uni.city) === selectedCity);

@@ -9,7 +9,6 @@ export function route(pageContext: PageContext) {
     const segments = urlPathname.replace(/^\/cursos\/?/, '').split('/').filter(Boolean);
 
     const firstIsType = segments.length > 0 && (segments[0] === 'publica' || segments[0] === 'particular');
-    const firstIsSearch = segments.length > 0 && segments[0].startsWith('q=');
 
     // Se 3 segmentos e NÃO começa com tipo → é página de detalhe (state/city/slug)
     if (segments.length === 3 && !firstIsType) return false;
@@ -19,6 +18,14 @@ export function route(pageContext: PageContext) {
 
     // Extrair filtros da URL
     const routeParams: Record<string, string> = {};
+
+    // Lê query string: /cursos?q=medicina
+    // urlParsed.search é um Record<string, string> no Vike 0.4
+    const search: Record<string, string> = (pageContext as any).urlParsed?.search ?? {};
+    if (search['q']) routeParams.searchTerm = search['q'];
+    if (search['type']) routeParams.type = search['type'];
+    if (search['state']) routeParams.state = search['state'];
+    if (search['city']) routeParams.city = search['city'];
 
     if (segments.length >= 1) {
         const first = segments[0];
@@ -31,18 +38,6 @@ export function route(pageContext: PageContext) {
             if (segments.length >= 2) routeParams.state = segments[1];
             if (segments.length >= 3) routeParams.city = segments[2];
 
-        } else if (firstIsSearch) {
-            // Ex: /cursos/q=medicina?type=publica&state=sergipe&city=aracaju
-            routeParams.searchTerm = decodeURIComponent(first.substring(2));
-
-            // Lê filtros adicionais dos query params
-            const urlParsed = (pageContext as any).urlParsed;
-            const qs = urlParsed?.searchOriginal ?? urlParsed?.search ?? '';
-            const params = new URLSearchParams(qs.startsWith('?') ? qs.slice(1) : qs);
-            if (params.get('type')) routeParams.type = params.get('type')!;
-            if (params.get('state')) routeParams.state = params.get('state')!;
-            if (params.get('city')) routeParams.city = params.get('city')!;
-
         } else {
             // Ex: /cursos/sergipe → state
             // Ex: /cursos/sergipe/aracaju → state + city
@@ -54,3 +49,4 @@ export function route(pageContext: PageContext) {
     // precedence: 10 wins over Filesystem Routing (precedence 3) and parameterized route strings (precedence 6)
     return { routeParams, precedence: 10 };
 }
+
