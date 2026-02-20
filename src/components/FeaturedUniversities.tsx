@@ -18,6 +18,17 @@ interface University {
 }
 
 
+const FEATURED_UNIVERSITY_NAMES = [
+  'UNIVERSIDADE DE SÃO PAULO',
+  'UNIVERSIDADE FEDERAL DO RIO DE JANEIRO',
+  'UNIVERSIDADE FEDERAL DE MINAS GERAIS',
+  'UNIVERSIDADE FEDERAL DE SERGIPE',
+  'UNIVERSIDADE ESTADUAL DE CAMPINAS',
+  'UNIVERSIDADE FEDERAL DO RIO GRANDE DO SUL',
+  'UNIVERSIDADE ESTADUAL PAULISTA',
+  'UNIVERSIDADE DE BRASÍLIA',
+  'UNIVERSIDADE FEDERAL DE SANTA CATARINA'
+];
 
 const FeaturedUniversities: React.FC<FeaturedUniversitiesProps> = ({ onUniversitySelect, initialData }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -29,7 +40,7 @@ const FeaturedUniversities: React.FC<FeaturedUniversitiesProps> = ({ onUniversit
   const [isDragging, setIsDragging] = useState(false);
   const [featuredUniversities, setFeaturedUniversities] = useState<University[]>(() => {
     if (initialData && initialData.length > 0) {
-      return initialData.map((row: any) => ({
+      const allData = initialData.map((row: any) => ({
         id: row.id,
         name: row.name,
         location: `${row.cidade}, ${row.estado}`,
@@ -37,9 +48,44 @@ const FeaturedUniversities: React.FC<FeaturedUniversitiesProps> = ({ onUniversit
         city: row.cidade,
         image: row.logo || 'https://s1.static.brasilescola.uol.com.br/be/vestibular/66f30f0386eaf116ba64518409582190.jpg'
       }));
+
+      const filtered = allData.filter((uni: University) =>
+        FEATURED_UNIVERSITY_NAMES.some(featuredName =>
+          uni.name.toUpperCase() === featuredName
+        )
+      );
+
+      const unique = filtered.reduce((acc: University[], current: University) => {
+        const isDuplicateName = acc.some(uni => uni.name.toUpperCase() === current.name.toUpperCase());
+        if (!isDuplicateName) {
+          const hasLogoConflict = acc.some(uni =>
+            uni.image === current.image &&
+            uni.image !== 'https://s1.static.brasilescola.uol.com.br/be/vestibular/66f30f0386eaf116ba64518409582190.jpg'
+          );
+
+          if (hasLogoConflict) {
+            const alternativeEntry = filtered.find(uni =>
+              uni.name.toUpperCase() === current.name.toUpperCase() &&
+              !acc.some(accUni => accUni.image === uni.image)
+            );
+            acc.push(alternativeEntry || current);
+          } else {
+            acc.push(current);
+          }
+        }
+        return acc;
+      }, []);
+
+      // Sort according to the defined order
+      return unique.sort((a, b) => {
+        const indexA = FEATURED_UNIVERSITY_NAMES.indexOf(a.name.toUpperCase());
+        const indexB = FEATURED_UNIVERSITY_NAMES.indexOf(b.name.toUpperCase());
+        return indexA - indexB;
+      });
     }
     return [];
   });
+
   const [isLoading, setIsLoading] = useState(!initialData || initialData.length === 0);
 
   // Trigger animação de entrada
@@ -62,20 +108,8 @@ const FeaturedUniversities: React.FC<FeaturedUniversitiesProps> = ({ onUniversit
         if (error) throw error;
 
         if (universities) {
-          // Lista de universidades específicas para destaque (em MAIÚSCULAS como na planilha)
-          const featuredUniversityNames = [
-            'UNIVERSIDADE DE SÃO PAULO',
-            'UNIVERSIDADE FEDERAL DO RIO DE JANEIRO',
-            'UNIVERSIDADE FEDERAL DE MINAS GERAIS',
-            'UNIVERSIDADE FEDERAL DE SERGIPE',
-            'UNIVERSIDADE ESTADUAL DE CAMPINAS',
-            'UNIVERSIDADE FEDERAL DO RIO GRANDE DO SUL',
-            'UNIVERSIDADE ESTADUAL PAULISTA',
-            'UNIVERSIDADE DE BRASÍLIA',
-            'UNIVERSIDADE FEDERAL DE SANTA CATARINA'
-          ];
-
           const allUniversities = universities.map((row: any) => ({
+
             id: row.id,
             name: row.name,
             location: `${row.cidade}, ${row.estado}`,
@@ -86,34 +120,27 @@ const FeaturedUniversities: React.FC<FeaturedUniversitiesProps> = ({ onUniversit
 
           // Filtra apenas as universidades em destaque (comparação exata)
           const featured = allUniversities.filter((uni: University) =>
-            featuredUniversityNames.some(featuredName =>
+            FEATURED_UNIVERSITY_NAMES.some(featuredName =>
               uni.name.toUpperCase() === featuredName
             )
           );
 
           // Remove duplicatas - mantém apenas uma ocorrência de cada universidade
-          // Prioriza entradas com logos únicas (evita mostrar a mesma logo para universidades diferentes)
           const uniqueFeatured = featured.reduce((acc: University[], current: University) => {
             const isDuplicateName = acc.some(uni => uni.name.toUpperCase() === current.name.toUpperCase());
 
             if (!isDuplicateName) {
-              // Verifica se já existe outra universidade com a mesma logo
               const hasLogoConflict = acc.some(uni =>
                 uni.image === current.image &&
                 uni.image !== 'https://s1.static.brasilescola.uol.com.br/be/vestibular/66f30f0386eaf116ba64518409582190.jpg'
               );
 
-              // Se houver conflito de logo, busca outra ocorrência desta universidade com logo diferente
               if (hasLogoConflict) {
                 const alternativeEntry = featured.find(uni =>
                   uni.name.toUpperCase() === current.name.toUpperCase() &&
                   !acc.some(accUni => accUni.image === uni.image)
                 );
-                if (alternativeEntry) {
-                  acc.push(alternativeEntry);
-                } else {
-                  acc.push(current); // Se não encontrar alternativa, usa a atual mesmo
-                }
+                acc.push(alternativeEntry || current);
               } else {
                 acc.push(current);
               }
@@ -121,7 +148,14 @@ const FeaturedUniversities: React.FC<FeaturedUniversitiesProps> = ({ onUniversit
             return acc;
           }, []);
 
-          setFeaturedUniversities(uniqueFeatured);
+          // Sort according to the defined order
+          const sortedFeatured = uniqueFeatured.sort((a, b) => {
+            const indexA = FEATURED_UNIVERSITY_NAMES.indexOf(a.name.toUpperCase());
+            const indexB = FEATURED_UNIVERSITY_NAMES.indexOf(b.name.toUpperCase());
+            return indexA - indexB;
+          });
+
+          setFeaturedUniversities(sortedFeatured);
           setIsLoading(false);
         }
       } catch (error) {
