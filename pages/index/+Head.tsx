@@ -1,4 +1,4 @@
-import React from 'react';
+
 
 export function Head() {
     return (
@@ -15,6 +15,7 @@ export function Head() {
             <link rel="canonical" href="https://guia.melhoresescolasmedicas.com/" />
             <meta property="og:title" content="MEM | Catálogo de Medicina" />
             <meta property="og:type" content="website" />
+            <link rel="icon" type="image/png" href="https://melhoresescolasmedicas.com/wp-content/uploads/2023/12/Group-22.png" />
         </>
     );
 }

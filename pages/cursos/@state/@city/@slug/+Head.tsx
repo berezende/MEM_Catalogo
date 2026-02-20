@@ -18,6 +18,7 @@ export function Head() {
             <meta property="og:title" content={title} />
             <meta property="og:description" content={description} />
             <meta property="og:type" content="article" />
+            <link rel="icon" type="image/png" href="https://melhoresescolasmedicas.com/wp-content/uploads/2023/12/Group-22.png" />
         </>
     );
 }

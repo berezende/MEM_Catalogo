@@ -14,6 +14,7 @@ export function Head() {
         <>
             <title>{buildTitle()}</title>
             <meta name="description" content="Encontre cursos de medicina em todo o Brasil." />
+            <link rel="icon" type="image/png" href="https://melhoresescolasmedicas.com/wp-content/uploads/2023/12/Group-22.png" />
         </>
     );
 }
